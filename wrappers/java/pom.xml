@@ -3,7 +3,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.hyperledger</groupId>
-	<artifactId>indy</artifactId>
+	<artifactId>indy-custom</artifactId>
 	<packaging>jar</packaging>
 	<version>1.15.0</version>
 	<name>indy</name>
