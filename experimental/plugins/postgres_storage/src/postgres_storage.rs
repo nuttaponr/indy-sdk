@@ -1716,6 +1716,7 @@ impl WalletStorage for PostgresStorage {
         let query_qualifier = get_wallet_strategy_qualifier();
         let wallet_id_arg = self.wallet_id.to_owned();
         let total_count: Option<usize> = if search_options.retrieve_total_count {
+            let start = Instant::now();
             let (query_string, query_arguments) = match query_qualifier {
                 Some(_) => {
                     let (mut query_string, mut query_arguments) = query::wql_to_sql_count(&type_, query)?;
@@ -1754,6 +1755,8 @@ impl WalletStorage for PostgresStorage {
                 }
                 None => None
             }
+            let duration = start.elapsed();
+            trace!("Time elapsed in search_options.retrieve_total_count is: {:?}", duration);
         } else { None };
 
         if search_options.retrieve_records {
@@ -1762,7 +1765,7 @@ impl WalletStorage for PostgresStorage {
                 retrieve_tags: search_options.retrieve_tags,
                 retrieve_type: search_options.retrieve_type,
             };
-
+            let start = Instant::now();
             let (query_string, query_arguments) = match query_qualifier {
                 Some(_) => {
                     let (mut query_string, mut query_arguments) = query::wql_to_sql(&type_, query, options)?;
@@ -1802,6 +1805,8 @@ impl WalletStorage for PostgresStorage {
                 None
             };
             let storage_iterator = PostgresStorageIterator::new(Some(statement), &query_arguments[..], fetch_options, tag_retriever, total_count)?;
+            let duration = start.elapsed();
+            trace!("Time elapsed in search_options.retrieve_records is: {:?}", duration);
             Ok(Box::new(storage_iterator))
         } else {
             let storage_iterator = PostgresStorageIterator::new(None, &[], RecordOptions::default(), None, total_count)?;
