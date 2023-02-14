@@ -17,7 +17,7 @@ use serde_json;
 
 use self::owning_ref::OwningHandle;
 use std::rc::Rc;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use self::percent_encoding::{utf8_percent_encode, NON_ALPHANUMERIC};
 
@@ -1756,7 +1756,7 @@ impl WalletStorage for PostgresStorage {
                 None => None
             }
             let duration = start.elapsed();
-            trace!("Time elapsed in search_options.retrieve_total_count is: {:?}", duration);
+            debug!("Time elapsed in search_options.retrieve_total_count is: {:?}", duration);
         } else { None };
 
         if search_options.retrieve_records {
@@ -1806,7 +1806,7 @@ impl WalletStorage for PostgresStorage {
             };
             let storage_iterator = PostgresStorageIterator::new(Some(statement), &query_arguments[..], fetch_options, tag_retriever, total_count)?;
             let duration = start.elapsed();
-            trace!("Time elapsed in search_options.retrieve_records is: {:?}", duration);
+            debug!("Time elapsed in search_options.retrieve_records is: {:?}", duration);
             Ok(Box::new(storage_iterator))
         } else {
             let storage_iterator = PostgresStorageIterator::new(None, &[], RecordOptions::default(), None, total_count)?;
